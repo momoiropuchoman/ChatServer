@@ -76,6 +76,9 @@ class ChatClientHandler extends Thread {
 		else if(commands[0].equalsIgnoreCase("groups")) {
 		    printGroups();
 		}
+		else if(commands[0].equalsIgnoreCase("members")) {
+		    printGroupMembers(commands[1]);
+		}
 	    }
 	} catch(IOException e) {
 	    e.printStackTrace();
@@ -309,6 +312,31 @@ class ChatClientHandler extends Thread {
 	    returnMessage = "グループは存在しません.";
 	}
 	this.send(returnMessage); 
+    }
+
+    public void printGroupMembers(String groupName) throws IOException {
+	
+	List names = new ArrayList(); 
+
+	for(int i = 0; i < groups.size(); i++) {
+	    ChatGroup group = (ChatGroup)groups.get(i);
+	    if(groupName.equals(group.getGroupName())) {
+		for(int j = 0; j < group.members.size(); j++) {
+		    ChatClientHandler handler = (ChatClientHandler)group.members.get(j);
+		    if(handler == group.manager) { 
+			names.add(handler.getClientName() + "★");
+		    }
+		    else{ 
+			names.add(handler.getClientName());	
+		    }	    
+		}
+		
+		String returnMessage = toString(names); 
+		this.send(returnMessage); 
+		return;
+	    }
+	}
+	send("そのグループは存在しません.");
     }
     
     public String toString(List list) {
