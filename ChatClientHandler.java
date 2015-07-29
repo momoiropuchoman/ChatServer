@@ -70,6 +70,9 @@ class ChatClientHandler extends Thread {
 		else if(commands[0].equalsIgnoreCase("leave")) {
 		    leaveGroup(commands[1]);
 		}
+		else if(commands[0].equalsIgnoreCase("join")) {
+		    joinGroup(commands[1]);
+		}
 	    }
 	} catch(IOException e) {
 	    e.printStackTrace();
@@ -264,6 +267,28 @@ class ChatClientHandler extends Thread {
 		return;
 	    }
 	}
+	send("そのグループは存在しません.");
+    }
+
+    public void joinGroup(String groupName) throws IOException {
+
+	for(int i = 0; i < groups.size(); i++) {
+	    ChatGroup group = (ChatGroup)groups.get(i);
+	    
+	    if(groupName.equals(group.getGroupName())) {
+		for(int j = 0; j < group.members.size(); j++) {
+		    if(this == group.members.get(j)) {
+			send("あなたはすでにメンバーです.");
+			return;
+		    }
+		}
+		group.members.add(this); 
+		send(groupName + "に参加しました.");
+		return;
+	    }
+	}
+	
+	// グループの名前が見つからなければここまで到達する
 	send("そのグループは存在しません.");
     }
     
