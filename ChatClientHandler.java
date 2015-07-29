@@ -35,8 +35,11 @@ class ChatClientHandler extends Thread {
 	    while(true) {
 		String message = receive();
 		String[] commands = message.split(" ");
-		
-		if(commands[0].equalsIgnoreCase("name")) {
+
+		if(commands[0].equalsIgnoreCase("help")) {
+		    send("help, name, whoami, users, bye, post, tell, reject, create, leave, join, groups, members");
+		}
+		else if(commands[0].equalsIgnoreCase("name")) {
 		    setClientName(commands[1]); 
 		    send(getClientName());
 		}
