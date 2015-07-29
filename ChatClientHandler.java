@@ -56,6 +56,14 @@ class ChatClientHandler extends Thread {
 		else if(commands[0].equalsIgnoreCase("tell")) {
 		    tell(commands[1], commands[2]);
 		}
+		else if(commands[0].equalsIgnoreCase("reject")) {
+		    if(commands.length == 2) {
+			reject(commands[1]);
+		    }	
+		    if(commands.length == 1) { 
+			reject(); 
+		    }	
+		}
 	    }
 	} catch(IOException e) {
 	    e.printStackTrace();
@@ -179,7 +187,35 @@ class ChatClientHandler extends Thread {
 	this.send("この名前は存在しません."); 	
     }	
 
+    public void reject(String name) throws IOException {
 
+	for(int i = 0; i < clients.size(); i++) {
+	    ChatClientHandler handler = (ChatClientHandler)clients.get(i);
+	    if(name.equals(handler.getClientName())) { 
+		for(int j = 0; j < rejectNames.size(); j++) {
+		    if(rejectNames.get(j).equals(name)) {
+			rejectNames.remove(j);
+			reject();
+			return;
+		    }
+		}
+		rejectNames.add(name);	
+		reject();
+		return;
+	    }
+	}
+	send("その名前は存在しません.");	
+    }
+
+    public void reject() throws IOException {
+
+	String returnMessage = toString(rejectNames); 
+	if(returnMessage.equals("")) {
+	    returnMessage = "拒否しているユーザはいません.";
+	}
+	this.send(returnMessage);
+    }
+    
     public String toString(List list) {
 	
 	Collections.sort(list);	
