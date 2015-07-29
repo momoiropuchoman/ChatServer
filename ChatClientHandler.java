@@ -29,4 +29,50 @@ class ChatClientHandler extends Thread {
 	setClientName("undefined" + count); 
     }
 
+    public void run() {
+	try{
+	    open();
+	    while(true) {
+		String message = receive();
+	    }
+	} catch(IOException e) {
+	    e.printStackTrace();
+	} finally{
+	    close(); 
+	}
+    }
+
+    void open() throws IOException {
+	InputStream socketIn = socket.getInputStream();
+	OutputStream socketOut = socket.getOutputStream();
+	in = new BufferedReader(new InputStreamReader(socketIn));
+	out = new BufferedWriter(new OutputStreamWriter(socketOut));
+    }
+    
+    String receive() throws IOException {
+	String line = in.readLine();
+	System.out.print(this.name + ": ");
+	System.out.println(line);
+	return line;
+    }
+  
+    void close() {
+	if(in != null) {
+	    try{
+		in.close();
+	    } catch(IOException e) {}
+	}
+	if(out != null) {
+	    try{
+		out.close();
+	    } catch(IOException e) {}
+	}
+	if(socket != null) {
+	    try{
+		socket.close();
+	    } catch(IOException e) {}
+	}
+	System.out.println("クライアントが接続を切断しました.");
+    }
+
 }
