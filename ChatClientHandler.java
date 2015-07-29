@@ -43,6 +43,9 @@ class ChatClientHandler extends Thread {
 		else if(commands[0].equalsIgnoreCase("whoami")) {
 		    send(getClientName()); 
 		}
+		else if(commands[0].equalsIgnoreCase("users")) {
+		    printUsers(); 
+		}
 	    }
 	} catch(IOException e) {
 	    e.printStackTrace();
@@ -75,6 +78,18 @@ class ChatClientHandler extends Thread {
 	}
 	
 	this.name = name; 
+    }
+
+    public void printUsers() throws IOException {
+	
+	List users = new ArrayList();
+	for(int i = 0; i < clients.size(); i++) {
+	    ChatClientHandler handler = (ChatClientHandler)clients.get(i);
+	    users.add(handler.getClientName()); 
+	}
+  
+	String returnMessage = toString(users); 
+	this.send(returnMessage); 
     }
 
 
