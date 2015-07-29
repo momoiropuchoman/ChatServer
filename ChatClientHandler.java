@@ -53,6 +53,9 @@ class ChatClientHandler extends Thread {
 		else if(commands[0].equalsIgnoreCase("post")) {
 		    post(this.clients, commands[1]);
 		}
+		else if(commands[0].equalsIgnoreCase("tell")) {
+		    tell(commands[1], commands[2]);
+		}
 	    }
 	} catch(IOException e) {
 	    e.printStackTrace();
@@ -147,6 +150,35 @@ class ChatClientHandler extends Thread {
 	    this.send(returnMessage);
 	}
     }
+
+    public void tell(String name, String message) throws IOException {	
+	
+	for(int i = 0; i < clients.size(); i++) {
+	    ChatClientHandler handler = (ChatClientHandler)clients.get(i);
+	    if(handler.getClientName().equals(name)) {
+		for(int j = 0; j < handler.rejectNames.size(); j++) {
+		    if(handler.rejectNames.get(j).equals(this.getClientName())) {
+			this.send("no one receive message");
+			return;
+		    }
+		}
+		handler.send("[" + this.getClientName() + 
+			     "≫" +  handler.getClientName() + "] " + message); 
+		this.send(handler.getClientName()); 
+		return;		
+	    }   
+	}
+
+	for(int i = 0; i < groups.size(); i++) {
+	    ChatGroup group = (ChatGroup)groups.get(i);
+	    if(name.equals(group.getGroupName())) {
+		post(group.members, message);
+		return;
+	    }
+	}
+	this.send("この名前は存在しません."); 	
+    }	
+
 
     public String toString(List list) {
 	
