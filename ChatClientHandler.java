@@ -64,6 +64,9 @@ class ChatClientHandler extends Thread {
 			reject(); 
 		    }	
 		}
+		else if(commands[0].equalsIgnoreCase("create")) {
+		    createGroup(commands[1]);
+		}
 	    }
 	} catch(IOException e) {
 	    e.printStackTrace();
@@ -215,6 +218,30 @@ class ChatClientHandler extends Thread {
 	}
 	this.send(returnMessage);
     }
+
+    public void createGroup(String groupName) throws IOException {
+
+	for(int i = 0; i < clients.size(); i++) {
+	    ChatClientHandler handler = (ChatClientHandler)clients.get(i);
+	    if(groupName.equals(handler.getClientName())) {
+		send("その名前は使用できません.");
+		return;
+	    }
+	}
+
+	for(int i = 0; i < groups.size(); i++) {
+	    ChatGroup group = (ChatGroup)groups.get(i);
+	    if(groupName.equals(group.getGroupName())) {
+		send("その名前は使用できません.");
+		return;
+	    }
+	}
+	
+	ChatGroup group = new ChatGroup(this, groupName);
+	groups.add(group);
+	send("グループを作成しました.");
+    }
+
     
     public String toString(List list) {
 	
