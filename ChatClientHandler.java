@@ -50,6 +50,9 @@ class ChatClientHandler extends Thread {
 		    bye(); 
 		    break; 
 		}
+		else if(commands[0].equalsIgnoreCase("post")) {
+		    post(this.clients, commands[1]);
+		}
 	    }
 	} catch(IOException e) {
 	    e.printStackTrace();
@@ -118,6 +121,47 @@ class ChatClientHandler extends Thread {
 	 leaveAllGroups(); 
      }
 
+    public void post(List clients, String message) throws IOException {
+
+	List names = new ArrayList(); 
+	for(int i = 0; i < clients.size(); i++) {
+	    ChatClientHandler handler = (ChatClientHandler)clients.get(i);
+	    boolean isRejected = false; 
+	    if(handler != this) { 
+		for(int j = 0; j < handler.rejectNames.size(); j++) {
+		    if(handler.rejectNames.get(j).equals(this.getClientName())) {
+			isRejected = true; 
+		    }
+		}
+		if(isRejected == false) {
+		    names.add(handler.getClientName());
+		    handler.send("[" + this.getClientName() + "] " + message);
+		}
+	    }
+	}
+	String returnMessage = toString(names);
+	
+	if(names.size() == 0) { 
+	    this.send("no one receive message"); 
+	} else {
+	    this.send(returnMessage);
+	}
+    }
+
+    public String toString(List list) {
+	
+	Collections.sort(list);	
+	String message = "";
+
+	for(int i = 0; i < list.size(); i++) {
+	    message = message + list.get(i);
+	    if(i < list.size() - 1) { 
+		message = message + ", ";
+	    }	    
+	}
+	return message;
+    }
+    
     void open() throws IOException {
 	InputStream socketIn = socket.getInputStream();
 	OutputStream socketOut = socket.getOutputStream();
