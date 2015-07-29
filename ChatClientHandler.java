@@ -46,6 +46,10 @@ class ChatClientHandler extends Thread {
 		else if(commands[0].equalsIgnoreCase("users")) {
 		    printUsers(); 
 		}
+		else if(commands[0].equalsIgnoreCase("bye")) {
+		    bye(); 
+		    break; 
+		}
 	    }
 	} catch(IOException e) {
 	    e.printStackTrace();
@@ -92,6 +96,27 @@ class ChatClientHandler extends Thread {
 	this.send(returnMessage); 
     }
 
+    public void bye() throws IOException {	
+	 send("接続を切断しました."); 
+
+	 for(int i = 0; i < clients.size(); i++) {
+	     ChatClientHandler handler = (ChatClientHandler)clients.get(i);
+	     if(handler == this) {
+		 clients.remove(i); 
+	     }
+	 }
+
+	 for(int i = 0; i < clients.size(); i++) {
+	     ChatClientHandler handler = (ChatClientHandler)clients.get(i);
+	     for(int j = 0; j < handler.rejectNames.size(); j++) {
+		 if(this.name.equals(handler.rejectNames.get(j))) {
+		     handler.rejectNames.remove(j);
+		 }		
+	     }
+	 }
+	 
+	 leaveAllGroups(); 
+     }
 
     void open() throws IOException {
 	InputStream socketIn = socket.getInputStream();
@@ -105,6 +130,12 @@ class ChatClientHandler extends Thread {
 	System.out.print(this.name + ": ");
 	System.out.println(line);
 	return line;
+    }
+
+    void send(String message) throws IOException {
+	out.write(message);
+	out.write("\r\n");
+	out.flush();
     }
   
     void close() {
