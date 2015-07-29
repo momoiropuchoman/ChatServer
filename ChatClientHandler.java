@@ -34,6 +34,12 @@ class ChatClientHandler extends Thread {
 	    open();
 	    while(true) {
 		String message = receive();
+		String[] commands = message.split(" ");
+		
+		if(commands[0].equalsIgnoreCase("name")) {
+		    setClientName(commands[1]); 
+		    send(getClientName());
+		}
 	    }
 	} catch(IOException e) {
 	    e.printStackTrace();
@@ -41,6 +47,33 @@ class ChatClientHandler extends Thread {
 	    close(); 
 	}
     }
+
+    public String getClientName() {
+	return name;
+    }
+ 
+    public void setClientName(String name) throws IOException {
+
+	for(int i = 0; i < clients.size(); i++) {
+	    ChatClientHandler handler = (ChatClientHandler)clients.get(i);
+	    if(name.equals(handler.getClientName())) { 
+		send("この名前は使用できません.");
+		return; 
+	    }
+	}
+	
+	for(int i = 0; i < clients.size(); i++) {
+	    ChatClientHandler handler = (ChatClientHandler)clients.get(i);
+	    for(int j = 0; j < handler.rejectNames.size(); j++) {
+		if(handler.rejectNames.get(j).equals(this.name)) {
+		    handler.rejectNames.set(j, name);
+		}
+	    }
+	}
+	
+	this.name = name; 
+    }
+
 
     void open() throws IOException {
 	InputStream socketIn = socket.getInputStream();
