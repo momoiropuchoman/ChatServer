@@ -40,6 +40,9 @@ class ChatClientHandler extends Thread {
 		    setClientName(commands[1]); 
 		    send(getClientName());
 		}
+		else if(commands[0].equalsIgnoreCase("whoami")) {
+		    send(getClientName()); 
+		}
 	    }
 	} catch(IOException e) {
 	    e.printStackTrace();
