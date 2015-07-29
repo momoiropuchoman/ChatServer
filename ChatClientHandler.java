@@ -150,6 +150,22 @@ class ChatClientHandler extends Thread {
 	 leaveAllGroups(); 
      }
 
+    public void leaveAllGroups() throws IOException {
+
+	for(int i = 0; i < groups.size(); i++) {
+	    ChatGroup group = (ChatGroup)groups.get(i);	    
+	    for(int j = 0; j < group.members.size(); j++) {
+		if(this == group.members.get(j)) {
+		    group.members.remove(j);
+		    if(group.members.size() == 0) {
+			groups.remove(i);
+		    }
+		}
+	    }	    
+	}	
+    }
+
+
     public void post(List clients, String message) throws IOException {
 
 	List names = new ArrayList(); 
